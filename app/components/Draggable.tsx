@@ -5,11 +5,18 @@ import { useCallback } from "react";
 import { motion } from "motion/react";
 type Props = {
   id: number;
-  onSetDraggedItemId: (id: number) => void;
-  onShuffle: (id: number) => void;
+  onSetDraggedItemId?: (id: number) => void;
+  onShuffle?: (id: number) => void;
   children: ReactNode;
+  className?: string;
 };
-function Draggable({ id, onSetDraggedItemId, onShuffle, children }: Props) {
+function Draggable({
+  id,
+  onSetDraggedItemId,
+  onShuffle,
+  children,
+  className,
+}: Props) {
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -22,7 +29,7 @@ function Draggable({ id, onSetDraggedItemId, onShuffle, children }: Props) {
         x: e.clientX - position.x,
         y: e.clientY - position.y,
       });
-      onSetDraggedItemId(id);
+      onSetDraggedItemId?.(id);
     },
     [position.x, position.y],
   );
@@ -47,7 +54,7 @@ function Draggable({ id, onSetDraggedItemId, onShuffle, children }: Props) {
       } else {
         if (isHovered) {
           console.log(`Item ${id} is hovered and mouse is released.`);
-          onShuffle(id);
+          onShuffle?.(id);
         }
       }
     },
@@ -86,14 +93,9 @@ function Draggable({ id, onSetDraggedItemId, onShuffle, children }: Props) {
         top: isDragging ? position.y : 0,
         zIndex: isDragging ? 10 : 0,
       }}
-      className={clsx(
-        `h-10 w-10 bg-white bg-opacity-20 border-white border  rounded-xl flex justify-center items-center font-bold
-          text-slate-500 cursor-pointer relative transition-all  duration-200 select-none`,
-        "shadow-lg",
-        {
-          "scale-150 transition-none pointer-events-none": isDragging,
-        },
-      )}
+      className={clsx("select-none relative", className, {
+        "scale-150 transition-none pointer-events-none": isDragging,
+      })}
     >
       {children}
     </motion.div>
